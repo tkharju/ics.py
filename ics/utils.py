@@ -79,6 +79,172 @@ def get_lines(container, name):
             del container[i]
     return lines
 
+def parse_recurrent(line):
+
+    WEEKDAYS = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
+
+    def freq(frequency):
+
+        FREQ = {"SECONDLY" : timedelta(seconds = 1),
+            "MINUTELY" : timedelta(minutes = 1),
+            "HOURLY" : timedelta(hours = 1),
+            "DAILY" : timedelta(days = 1),
+            "WEEKLY" : timedelta(weeks = 1),
+            "MONTHLY" : timedelta(weeks = 52),
+            "YEARLY" : timedelta(weeks = 52 * 12)
+        }
+
+        return FREQ[frequency] if frequency in FREQ else None
+        
+    def until(enddate):
+        
+        return enddate
+        
+    def count(digit):
+    
+        if len(digit) > 1:
+            raise Exception("Digit must be one digit")
+            
+        return digit
+        
+    def interval(digit):
+    
+        if len(digit) > 1 or digit < 0:
+            raise Exception("Digit must be one positive digit")
+        
+        return digit
+        
+    def bysecond(byseclist):
+    
+        byseclist = byseclist.split(",")
+        
+        for seconds in byseclist:
+            if not 0 <= seconds <= 60:
+                raise Exception("Seconds must be between 0 and 60")
+    
+        return byseclist
+    
+    def byminute(byminlist):
+
+        byminlist = byminlist.split(",")
+        
+        for minutes in byminlist:
+            if not 0 <= minutes <= 59:
+                raise Exception("Minutes must be between 0 and 59")
+    
+        return byminlist
+    
+    def byhour(byhrlist):
+        
+        byhrlist = byhrlist.split(",")
+        
+        for hour in byhrlist:
+            if not 0 <= hour <= 23:
+                raise Exception("Hours must be between 0 and 23")
+    
+        return byhrlist
+        
+    def byday(bywdaylist):
+    
+        bywdaylist = bywdaylist.split(",")
+    
+        for weekdaynum in bywdaylist:
+        
+            sign, ordwk, weekday = re.search('([+,-])?(\d*)(\w*)', weekdaynum).groups()
+        
+            if ordwk and not 1 <= ordwk <= 53:
+                raise Exception("Week of year must be between 1 and 53")
+                
+            if weekday not in WEEKDAYS:
+                raise Exception("Unknown weekday")
+        
+        return bywdaylist if len(bywdaylist) > 1 else bywdaylist[0]
+    
+    def bymonthday(bymodaylist):
+        
+        bymodaylist = bymodaylist.split(",")
+        
+        for monthdaynum in bymodaylist:
+        
+            sign, ordmoday = re.search('([+,-])?(\w*)', monthdaynum).groups()
+        
+            if not 1 <= ordmoday <= 31:
+                raise Exception("Day of month must be between 1 and 31")
+    
+        return bymodaylist
+    
+    def byyearday(byyrdaylist):
+        
+        byyrdaylist = byyrdaylist.split(",")
+        
+        for yeardaynum in byyrdaylist:
+        
+            sign, ordyrday = re.search('([+,-])?(\w*)', yeardaynum).groups()
+        
+            if not 1 <= ordyrday <= 366:
+                raise Exception("Day of year must be between 1 and 366")
+    
+        return byyrdaylist
+        
+    def byweekno(bywknolist):
+        
+        bywknolist = bywknolist.split(",")
+        
+        for weeknum in bywknolist:
+        
+            sign, ordwk = re.search('([+,-])?(\w*)', weeknum).groups()
+        
+            if not 1 <= ordwk <= 53:
+                raise Exception("Week must be between 1 and 53")
+    
+        return bywknolist
+        
+    def bymonth(bymolist):
+        
+        bymolist = bymolist.split(",")
+        
+        for monthnum in bymolist:
+        
+            if not 1 <= monthnum <= 12:
+                raise Exception("Month must be between 1 and 12")
+    
+        return bymolist
+        
+    def bysetpos(bysplist):
+        
+        return byyearday(bysplist)
+        
+    def wkst(weekday):
+    
+        if weekday not in WEEKDAYS:
+            raise Exception("Unknown weekday")
+                
+        return weekday
+
+    rules = {"FREQ" : freq, "UNTIL" : until, "COUNT" : count, "INTERVAL" : interval, "BYSECOND" : bysecond, "BYMINUTE" : byminute,
+        "BYHOUR" : byhour, "BYDAY" : byday, "BYMONTHDAY" : bymonthday, "BYYEARDAY" : byyearday, "BYWEEKNO" : byweekno, "BYMONTH" : bymonth, 
+        "BYSETPOS" : bysetpos, "WKST" : wkst}
+    
+    to_return = {}
+    
+    # line = "RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=TU"
+    # [['FREQ', 'MONTHLY'], ['INTERVAL', '2'], ['BYDAY', 'TU']]
+    parts = map(lambda x : x.split("="), line.split(":")[1].split(";"))
+    for part in parts:
+        if part[0] not in rules:
+            continue
+        name = part[0]
+        to_return[name.lower()] = rules[name](part[1])
+    print(to_return) # debug
+    
+    if not 'freq' in to_return:
+        raise Exception("Recurrent must contain 'FREQ'")
+    
+    if 'until' and 'count' in to_return:
+        raise Exception("Recurrent cannot contain 'UNTIL' and 'COUNT'")
+        
+    return to_return
+
 
 def parse_duration(line):
     """
