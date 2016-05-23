@@ -174,7 +174,7 @@ def arrow_date_to_iso(instant):
 
 def uid_gen():
     uid = str(uuid4())
-    return "{}@{}.org".format(uid, uid[:4])
+    return "{0}@{1}.org".format(uid, uid[:4])
 
 
 def escape_string(string):

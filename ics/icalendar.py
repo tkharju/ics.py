@@ -75,7 +75,7 @@ class Calendar(Component):
 
         Should not be used directly. Use self.__repr__ instead.
         """
-        return "<Calendar with {} event{}>" \
+        return "<Calendar with {0} event{1}>" \
             .format(len(self.events), "s" if len(self.events) > 1 else "")
 
     def __iter__(self):
@@ -124,7 +124,7 @@ class Calendar(Component):
     @creator.setter
     def creator(self, value):
         if not isinstance(value, text_type):
-            raise ValueError('Event.creator must be unicode data not {}'.format(type(value)))
+            raise ValueError('Event.creator must be unicode data not {0}'.format(type(value)))
         self._creator = value
 
     def clone(self):

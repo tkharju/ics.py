@@ -228,21 +228,21 @@ class Event(Component):
         Returns:
             unicode: a unicode representation (__repr__) of the event.
         """
-        name = "'{}' ".format(self.name) if self.name else ''
+        name = "'{0}' ".format(self.name) if self.name else ''
         if self.all_day:
             if not self._end_time or self._begin == self._end_time:
-                return "<all-day Event {}{}>".format(name, self.begin.strftime("%F"))
+                return "<all-day Event {0}{1}>".format(name, self.begin.strftime("%F"))
             else:
-                return "<all-day Event {}begin:{} end:{}>".format(name, self._begin.strftime("%F"), self._end_time.strftime("%F"))
+                return "<all-day Event {0}begin:{1} end:{2}>".format(name, self._begin.strftime("%F"), self._end_time.strftime("%F"))
         elif self.begin is None:
-            return "<Event '{}'>".format(self.name) if self.name else "<Event>"
+            return "<Event '{0}'>".format(self.name) if self.name else "<Event>"
         else:
-            return "<Event {}begin:{} end:{}>".format(name, self.begin, self.end)
+            return "<Event {0}begin:{1} end:{2}>".format(name, self.begin, self.end)
 
     def __lt__(self, other):
         if not isinstance(other, Event):
             raise NotImplementedError(
-                'Cannot compare Event and {}'.format(type(other)))
+                'Cannot compare Event and {0}'.format(type(other)))
         if self.begin is None and other.begin is None:
             if self.name is None and other.name is None:
                 return False
@@ -257,7 +257,7 @@ class Event(Component):
     def __le__(self, other):
         if not isinstance(other, Event):
             raise NotImplementedError(
-                'Cannot compare Event and {}'.format(type(other)))
+                'Cannot compare Event and {0}'.format(type(other)))
         if self.begin is None and other.begin is None:
             if self.name is None and other.name is None:
                 return True
@@ -272,7 +272,7 @@ class Event(Component):
     def __gt__(self, other):
         if not isinstance(other, Event):
             raise NotImplementedError(
-                'Cannot compare Event and {}'.format(type(other)))
+                'Cannot compare Event and {0}'.format(type(other)))
         if self.begin is None and other.begin is None:
             return self.name > other.name
         return self.begin > other.begin
@@ -280,7 +280,7 @@ class Event(Component):
     def __ge__(self, other):
         if not isinstance(other, Event):
             raise NotImplementedError(
-                'Cannot compare Event and {}'.format(type(other)))
+                'Cannot compare Event and {0}'.format(type(other)))
         if self.begin is None and other.begin is None:
             return self.name >= other.name
         return self.begin >= other.begin

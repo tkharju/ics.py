@@ -40,12 +40,12 @@ class ContentLine:
     def __str__(self):
         params_str = ''
         for pname in self.params:
-            params_str += ';{}={}'.format(pname, ','.join(self.params[pname]))
-        ret = "{}{}:{}".format(self.name, params_str, self.value)
+            params_str += ';{0}={1}'.format(pname, ','.join(self.params[pname]))
+        ret = "{0}{1}:{2}".format(self.name, params_str, self.value)
         return ret.encode('utf-8') if PY2 else ret
 
     def __repr__(self):
-        return "<ContentLine '{}' with {} parameter{}. Value='{}'>" \
+        return "<ContentLine '{0}' with {1} parameter{2}. Value='{3}'>" \
             .format(
                 self.name,
                 len(self.params),
@@ -62,7 +62,7 @@ class ContentLine:
     @classmethod
     def parse(cls, line):
         if ':' not in line:
-            raise ParseError("No ':' in line '{}'".format(line))
+            raise ParseError("No ':' in line '{0}'".format(line))
 
         # Separate key and value
         splitted = line.split(':', 1)
@@ -76,7 +76,7 @@ class ContentLine:
         params = {}
         for paramstr in params_strings:
             if '=' not in paramstr:
-                raise ParseError("No '=' in line '{}'".format(line))
+                raise ParseError("No '=' in line '{0}'".format(line))
             pname, pvals = paramstr.split('=', 1)
             params[pname] = pvals.split(',')
         return cls(name, params, value)
@@ -108,7 +108,7 @@ class Container(list):
         return CRLF.join(ret)
 
     def __repr__(self):
-        return "<Container '{}' with {} element{}>" \
+        return "<Container '{0}' with {1} element{2}>" \
             .format(self.name, len(self), "s" if len(self) > 1 else "")
 
     @classmethod
@@ -120,7 +120,7 @@ class Container(list):
             elif line.name == 'END':
                 if line.value != name:
                     raise ParseError(
-                        "Expected END:{}, got END:{}".format(name, line.value))
+                        "Expected END:{0}, got END:{1}".format(name, line.value))
                 break
             else:
                 items.append(line)
@@ -180,11 +180,11 @@ if __name__ == "__main__":
     def print_tree(elem, lvl=0):
         if isinstance(elem, list) or isinstance(elem, Container):
             if isinstance(elem, Container):
-                print("{}{}".format('   ' * lvl, elem.name))
+                print("{0}{1}".format('   ' * lvl, elem.name))
             for sub_elem in elem:
                 print_tree(sub_elem, lvl + 1)
         elif isinstance(elem, ContentLine):
-            print("{}{}{}".format('   ' * lvl,
+            print("{0}{1}{2}".format('   ' * lvl,
                   elem.name, elem.params, elem.value))
         else:
             print('Wuuut?')

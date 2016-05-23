@@ -34,18 +34,18 @@ class Component(object):
 
     def _populate(self, container):
         if container.name != self._TYPE:
-            raise ValueError("container isn't an {}".format(self._TYPE))
+            raise ValueError("container isn't an {0}".format(self._TYPE))
 
         for extractor in self._EXTRACTORS:
             lines = get_lines(container, extractor.type)
             if not lines and extractor.required:
                 raise ValueError(
-                    'A {} must have at least one {}'
+                    'A {0} must have at least one {1}'
                     .format(container.name, extractor.type))
 
             if not extractor.multiple and len(lines) > 1:
                 raise ValueError(
-                    'A {} must have at most one {}'
+                    'A {0} must have at most one {1}'
                     .format(container.name, extractor.type))
 
             if extractor.multiple:
@@ -84,7 +84,7 @@ class Component(object):
         else:
             t = self.__class__.__name__
             adress = hex(id(self))
-            return '<{} at {}>'.format(t, adress)
+            return '<{0} at {1}>'.format(t, adress)
 
     def __str__(self):
         """Returns the component in an iCalendar format."""
